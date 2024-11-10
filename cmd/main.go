@@ -50,8 +50,6 @@ func main() {
 		switch r.Method {
 		case http.MethodPost:
 			taskHandler.AddTask(w, r)
-		case http.MethodPut:
-			taskHandler.UpdateTask(w, r)
 		case http.MethodDelete:
 			taskHandler.DeleteTask(w, r)
 		default:

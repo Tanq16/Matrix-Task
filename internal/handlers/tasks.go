@@ -66,8 +66,8 @@ func (h *TaskHandler) RenderMatrix(w http.ResponseWriter, r *http.Request) {
 	q4Tasks, _ := h.store.GetTasksByQuadrant(models.QuadrantNotUrgentNotImportant)
 
 	data := templateData{
-		Title:  "Task Matrix",
-		Active: "matrix",
+		Title:  "Matrix-Task",
+		Active: "Tasks",
 		Data: map[string]interface{}{
 			"Q1Tasks": q1Tasks,
 			"Q2Tasks": q2Tasks,
@@ -91,23 +91,19 @@ func (h *TaskHandler) RenderArchive(w http.ResponseWriter, r *http.Request) {
 
 	archivedTasks, err := h.store.GetArchivedTasks()
 	if err != nil {
-		log.Printf("Error retrieving archived tasks: %v", err)
-		http.Error(w, "Failed to retrieve archived tasks", http.StatusInternalServerError)
+		http.Error(w, "Failed to get archived tasks", http.StatusInternalServerError)
 		return
 	}
 
-	log.Printf("Rendering archive with %d tasks", len(archivedTasks))
-
-	data := templateData{
-		Title:  "Archive - Task Matrix",
-		Active: "archive",
+	pageData := templateData{
+		Title:  "Matrix-Task Archive",
+		Active: "Archive",
 		Data: map[string]interface{}{
 			"Tasks": archivedTasks,
 		},
 	}
 
-	if err := h.tmpl.ExecuteTemplate(w, "layout.html", data); err != nil {
-		log.Printf("Error rendering archive template: %v", err)
+	if err := h.tmpl.ExecuteTemplate(w, "archivelayout.html", pageData); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -147,39 +143,6 @@ func (h *TaskHandler) AddTask(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-func (h *TaskHandler) UpdateTask(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPut {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-		return
-	}
-
-	var task models.Task
-	if err := json.NewDecoder(r.Body).Decode(&task); err != nil {
-		sendJSON(w, http.StatusBadRequest, response{
-			Success: false,
-			Error:   "Invalid request body",
-		})
-		return
-	}
-
-	if err := h.store.UpdateTask(task); err != nil {
-		status := http.StatusInternalServerError
-		if _, ok := err.(storage.ErrTaskNotFound); ok {
-			status = http.StatusNotFound
-		}
-		sendJSON(w, status, response{
-			Success: false,
-			Error:   err.Error(),
-		})
-		return
-	}
-
-	sendJSON(w, http.StatusOK, response{
-		Success: true,
-		Data:    task,
-	})
-}
-
 func (h *TaskHandler) CompleteTask(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
@@ -199,9 +162,10 @@ func (h *TaskHandler) CompleteTask(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Get the existing task
 	task, err := h.store.GetTask(req.ID)
 	if err != nil {
-		log.Printf("Error retrieving task %s: %v", req.ID, err)
+		log.Printf("Error getting task %s: %v", req.ID, err)
 		sendJSON(w, http.StatusNotFound, response{
 			Success: false,
 			Error:   "Task not found",
@@ -209,20 +173,19 @@ func (h *TaskHandler) CompleteTask(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Mark the task as completed
+	// Mark as completed
 	task.Completed = true
 
-	// Update the task in storage
+	// Update in storage
 	if err := h.store.UpdateTask(task); err != nil {
-		log.Printf("Error updating task %s: %v", req.ID, err)
+		log.Printf("Error updating completed task: %v", err)
 		sendJSON(w, http.StatusInternalServerError, response{
 			Success: false,
-			Error:   "Failed to complete task",
+			Error:   "Failed to update task",
 		})
 		return
 	}
 
-	log.Printf("Successfully completed task %s", req.ID)
 	sendJSON(w, http.StatusOK, response{
 		Success: true,
 		Data:    task,

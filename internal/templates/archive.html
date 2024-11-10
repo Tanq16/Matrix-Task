@@ -1,8 +1,11 @@
-{{define "content"}}
+{{define "contentarchive"}}
 <div class="archive-container">
     <div class="archive-header">
         <h2>Archived Tasks</h2>
     </div>
+
+    <!-- Debug info (temporary) -->
+    <!-- {{printf "%+v" .}} -->
 
     <div class="archive-list">
         {{if .Tasks}}
@@ -10,7 +13,7 @@
             <div class="archive-task-card" data-task-id="{{.ID}}">
                 <div class="task-info">
                     <p class="task-content">{{.Content}}</p>
-                    <span class="task-quadrant">{{.Quadrant.String}}</span>
+                    <span class="task-quadrant">{{.Quadrant}}</span>
                 </div>
                 <div class="task-actions">
                     <button class="delete-btn" onclick="deleteTask('{{.ID}}')">×</button>

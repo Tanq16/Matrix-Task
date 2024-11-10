@@ -164,11 +164,25 @@ window.deleteTask = async (taskId) => {
         const taskElement = document.querySelector(`[data-task-id="${taskId}"]`);
         if (taskElement) {
             taskElement.classList.add('fade-out');
-            setTimeout(() => taskElement.remove(), 300);
+            setTimeout(() => {
+                // Remove the task element
+                taskElement.remove();
+                
+                // Check if there are any remaining tasks in this quadrant
+                const remainingTasks = taskList.querySelectorAll('.task-card');
+                if (remainingTasks.length === 0) {
+                    // If no tasks remain, add the empty state
+                    const emptyState = document.createElement('div');
+                    emptyState.className = 'empty-state';
+                    emptyState.innerHTML = '<p>No tasks in this quadrant</p>';
+                    taskList.appendChild(emptyState);
+                }
+                
+                showNotification('Task deleted');
+            }, 300);
         }
-        
-        showNotification('Task deleted successfully');
     } catch (error) {
+        console.error('Failed to complete task:', error);
         showNotification('Failed to delete task', true);
     }
 };

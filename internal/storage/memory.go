@@ -47,8 +47,10 @@ func (m *MemoryStorage) UpdateTask(task models.Task) error {
 		return ErrTaskNotFound{TaskID: task.ID}
 	}
 
+	// Store the updated task
 	m.tasks[task.ID] = task
-	log.Printf("Updated task: %+v", task)
+	log.Printf("Updated task in storage: %+v", task)
+
 	return nil
 }
 
@@ -74,7 +76,7 @@ func (m *MemoryStorage) GetArchivedTasks() ([]models.Task, error) {
 			tasks = append(tasks, task)
 		}
 	}
-	log.Printf("Retrieved archived tasks: %d tasks found", len(tasks))
+
 	return tasks, nil
 }
 
@@ -88,6 +90,6 @@ func (m *MemoryStorage) GetTasksByQuadrant(quadrant models.Quadrant) ([]models.T
 			tasks = append(tasks, task)
 		}
 	}
-	log.Printf("Retrieved tasks for quadrant %d: %d tasks found", quadrant, len(tasks))
+
 	return tasks, nil
 }
