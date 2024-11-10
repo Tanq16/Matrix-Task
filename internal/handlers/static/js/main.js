@@ -43,6 +43,41 @@ const escapeHtml = (unsafe) => {
         .replace(/'/g, "&#039;");
 };
 
+const initializeTheme = () => {
+    // Create theme toggle button
+    const themeToggle = document.createElement('button');
+    themeToggle.className = 'theme-toggle';
+    themeToggle.innerHTML = '🌙'; // Default to moon icon
+    document.body.appendChild(themeToggle);
+    
+    // Check for saved theme preference
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        themeToggle.innerHTML = savedTheme === 'dark' ? '☀️' : '🌙';
+    }
+    
+    // Handle theme toggle
+    themeToggle.addEventListener('click', () => {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        
+        document.documentElement.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+        themeToggle.innerHTML = newTheme === 'dark' ? '☀️' : '🌙';
+        
+        // Optional: Show theme change notification
+        showNotification(`Switched to ${newTheme} mode`);
+    });
+};
+
+// Add theme initialization to DOMContentLoaded
+document.addEventListener('DOMContentLoaded', () => {
+    initializeTheme();
+    
+    // ... rest of your existing DOMContentLoaded code ...
+});
+
 // API Calls
 const api = {
     addTask: async (content, quadrant) => {

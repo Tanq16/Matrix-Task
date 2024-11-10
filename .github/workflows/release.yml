@@ -1,0 +1,57 @@
+name: Build and Release
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.23'
+
+      - name: Generate release tag
+        id: tag
+        run: echo "release_tag=v$(date +'-%Y.%m.%d')" >> $GITHUB_OUTPUT
+        # -${GITHUB_SHA::7}
+
+      - name: Build binaries
+        run: |
+          mkdir -p build
+          GOOS=linux GOARCH=amd64 go build -o build/matrix-x86-64 ./cmd/main.go
+          GOOS=linux GOARCH=arm64 go build -o build/matrix-arm64 ./cmd/main.go
+
+      - name: Generate checksums
+        run: |
+          cd build
+          sha256sum matrix-x86-64 matrix-arm64 > checksums.txt
+
+      - name: Create Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ steps.tag.outputs.release_tag }}
+        run: |
+          # Create release notes from git log
+          git fetch --prune --unshallow
+          RELEASE_NOTES=$(git log -1 --pretty=format:%b)
+          if [ -z "$RELEASE_NOTES" ]; then
+            RELEASE_NOTES="Release $TAG"
+          fi
+          
+          # Create release and upload assets
+          gh release create "$TAG" \
+            --title "Release $TAG" \
+            --notes "$RELEASE_NOTES" \
+            build/matrix-x86-64 \
+            build/matrix-arm64 \
+            build/checksums.txt

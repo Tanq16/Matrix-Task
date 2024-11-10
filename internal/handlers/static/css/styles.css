@@ -1,23 +1,51 @@
 :root {
-    /* Pastel Color Palette */
-    --color-primary: #a8d8ea;
-    --color-secondary: #aa96da;
-    --color-accent: #fcbad3;
-    --color-success: #95e1d3;
-    --color-warning: #fffaa1;
-    --color-danger: #ffb3b3;
+    /* Light Mode Colors */
+    --light-color-primary: #a8d8ea;
+    --light-color-secondary: #aa96da;
+    --light-color-accent: #fcbad3;
+    --light-color-success: #95e1d3;
+    --light-color-warning: #fffaa1;
+    --light-color-danger: #ffb3b3;
+    --light-q1-bg: #ffe5e5;
+    --light-q2-bg: #e5ffe5;
+    --light-q3-bg: #fff5e5;
+    --light-q4-bg: #e5f0ff;
+    --light-color-bg: #ffffff;
+    --light-color-text: #333333;
+    --light-color-text-light: #666666;
+    --light-color-border: #e0e0e0;
     
-    /* Background Colors for Quadrants */
-    --q1-bg: #ffe5e5;  /* Urgent & Important - Soft Red */
-    --q2-bg: #e5ffe5;  /* Not Urgent & Important - Soft Green */
-    --q3-bg: #fff5e5;  /* Urgent & Not Important - Soft Orange */
-    --q4-bg: #e5f0ff;  /* Not Urgent & Not Important - Soft Blue */
+    /* Dark Mode Colors */
+    --dark-color-primary: #2a9fd6;
+    --dark-color-secondary: #7b6ba1;
+    --dark-color-accent: #d16d8f;
+    --dark-color-success: #4caf50;
+    --dark-color-warning: #ffd700;
+    --dark-color-danger: #ff4444;
+    --dark-q1-bg: #422;
+    --dark-q2-bg: #242;
+    --dark-q3-bg: #442;
+    --dark-q4-bg: #224;
+    --dark-color-bg: #1a1a1a;
+    --dark-color-text: #e0e0e0;
+    --dark-color-text-light: #999999;
+    --dark-color-border: #333333;
     
-    /* Neutral Colors */
-    --color-bg: #ffffff;
-    --color-text: #333333;
-    --color-text-light: #666666;
-    --color-border: #e0e0e0;
+    /* Default to light theme */
+    --color-primary: var(--light-color-primary);
+    --color-secondary: var(--light-color-secondary);
+    --color-accent: var(--light-color-accent);
+    --color-success: var(--light-color-success);
+    --color-warning: var(--light-color-warning);
+    --color-danger: var(--light-color-danger);
+    --q1-bg: var(--light-q1-bg);
+    --q2-bg: var(--light-q2-bg);
+    --q3-bg: var(--light-q3-bg);
+    --q4-bg: var(--light-q4-bg);
+    --color-bg: var(--light-color-bg);
+    --color-text: var(--light-color-text);
+    --color-text-light: var(--light-color-text-light);
+    --color-border: var(--light-color-border);
     
     /* Spacing */
     --spacing-xs: 0.25rem;
@@ -32,6 +60,24 @@
     --radius-lg: 1rem;
 }
 
+/* Dark mode styles */
+[data-theme="dark"] {
+    --color-primary: var(--dark-color-primary);
+    --color-secondary: var(--dark-color-secondary);
+    --color-accent: var(--dark-color-accent);
+    --color-success: var(--dark-color-success);
+    --color-warning: var(--dark-color-warning);
+    --color-danger: var(--dark-color-danger);
+    --q1-bg: var(--dark-q1-bg);
+    --q2-bg: var(--dark-q2-bg);
+    --q3-bg: var(--dark-q3-bg);
+    --q4-bg: var(--dark-q4-bg);
+    --color-bg: var(--dark-color-bg);
+    --color-text: var(--dark-color-text);
+    --color-text-light: var(--dark-color-text-light);
+    --color-border: var(--dark-color-border);
+}
+
 /* Reset and Base Styles */
 * {
     margin: 0;
@@ -42,8 +88,9 @@
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
     line-height: 1.6;
+    background-color: var(--color-bg);
     color: var(--color-text);
-    background-color: #f5f5f5;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* Layout */
@@ -54,12 +101,13 @@ body {
 }
 
 .app-header {
-    background-color: var(--color-bg);
     padding: var(--spacing-md) var(--spacing-xl);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     display: flex;
     justify-content: space-between;
     align-items: center;
+    background-color: var(--color-bg);
+    border-bottom: 1px solid var(--color-border);
 }
 
 .app-header h1 {
@@ -109,6 +157,8 @@ body {
     padding: var(--spacing-lg);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
     transition: transform 0.2s ease;
+    background-color: var(--color-bg);
+    border: 1px solid var(--color-border);
 }
 
 .matrix-quadrant:hover {
@@ -161,6 +211,8 @@ body {
     justify-content: space-between;
     align-items: center;
     transition: transform 0.2s ease;
+    background-color: var(--color-bg);
+    border: 1px solid var(--color-border);
 }
 
 .task-card:hover {
@@ -175,6 +227,31 @@ body {
 .task-actions {
     display: flex;
     gap: var(--spacing-xs);
+}
+
+/* Theme toggle button styles */
+.theme-toggle {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: var(--color-secondary);
+    color: var(--color-bg);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s ease;
+    z-index: 1000;
+}
+
+.theme-toggle:hover {
+    transform: scale(1.1);
 }
 
 /* Buttons */
@@ -293,6 +370,7 @@ input[type="text"]:focus {
     border-radius: var(--radius-lg);
     padding: var(--spacing-xl);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    background-color: var(--color-bg);
 }
 
 .archive-header {
