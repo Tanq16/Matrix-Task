@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Matrix - {{.Title}}</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <h1>Task Matrix</h1>
+            <nav class="main-nav">
+                <a href="/" class="nav-link {{if eq .Active "matrix"}}active{{end}}">Matrix</a>
+                <a href="/archive" class="nav-link {{if eq .Active "archive"}}active{{end}}">Archive</a>
+            </nav>
+        </header>
+
+        <main class="main-content">
+            {{template "content" .}}
+        </main>
+
+        <footer class="app-footer">
+            <p>Simple Task Matrix Manager</p>
+        </footer>
+    </div>
+    <script src="/static/js/main.js"></script>
+</body>
+</html>

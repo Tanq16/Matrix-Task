@@ -1,0 +1,99 @@
+{{define "content"}}
+<div class="matrix-container">
+    <div class="matrix-grid">
+        <!-- Quadrant 1: Urgent & Important -->
+        <div class="matrix-quadrant" data-quadrant="1">
+            <div class="quadrant-header">
+                <h2>Urgent & Important</h2>
+                <button class="add-task-btn" onclick="showAddTaskForm(1)">+</button>
+            </div>
+            <div class="task-list">
+                {{range .Q1Tasks}}
+                <div class="task-card" data-task-id="{{.ID}}">
+                    <p class="task-content">{{.Content}}</p>
+                    <div class="task-actions">
+                        <button class="complete-btn" onclick="completeTask('{{.ID}}')">✓</button>
+                        <button class="delete-btn" onclick="deleteTask('{{.ID}}')">×</button>
+                    </div>
+                </div>
+                {{end}}
+            </div>
+        </div>
+
+        <!-- Quadrant 2: Not Urgent & Important -->
+        <div class="matrix-quadrant" data-quadrant="2">
+            <div class="quadrant-header">
+                <h2>Not Urgent & Important</h2>
+                <button class="add-task-btn" onclick="showAddTaskForm(2)">+</button>
+            </div>
+            <div class="task-list">
+                {{range .Q2Tasks}}
+                <div class="task-card" data-task-id="{{.ID}}">
+                    <p class="task-content">{{.Content}}</p>
+                    <div class="task-actions">
+                        <button class="complete-btn" onclick="completeTask('{{.ID}}')">✓</button>
+                        <button class="delete-btn" onclick="deleteTask('{{.ID}}')">×</button>
+                    </div>
+                </div>
+                {{end}}
+            </div>
+        </div>
+
+        <!-- Quadrant 3: Urgent & Not Important -->
+        <div class="matrix-quadrant" data-quadrant="3">
+            <div class="quadrant-header">
+                <h2>Urgent & Not Important</h2>
+                <button class="add-task-btn" onclick="showAddTaskForm(3)">+</button>
+            </div>
+            <div class="task-list">
+                {{range .Q3Tasks}}
+                <div class="task-card" data-task-id="{{.ID}}">
+                    <p class="task-content">{{.Content}}</p>
+                    <div class="task-actions">
+                        <button class="complete-btn" onclick="completeTask('{{.ID}}')">✓</button>
+                        <button class="delete-btn" onclick="deleteTask('{{.ID}}')">×</button>
+                    </div>
+                </div>
+                {{end}}
+            </div>
+        </div>
+
+        <!-- Quadrant 4: Not Urgent & Not Important -->
+        <div class="matrix-quadrant" data-quadrant="4">
+            <div class="quadrant-header">
+                <h2>Not Urgent & Not Important</h2>
+                <button class="add-task-btn" onclick="showAddTaskForm(4)">+</button>
+            </div>
+            <div class="task-list">
+                {{range .Q4Tasks}}
+                <div class="task-card" data-task-id="{{.ID}}">
+                    <p class="task-content">{{.Content}}</p>
+                    <div class="task-actions">
+                        <button class="complete-btn" onclick="completeTask('{{.ID}}')">✓</button>
+                        <button class="delete-btn" onclick="deleteTask('{{.ID}}')">×</button>
+                    </div>
+                </div>
+                {{end}}
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Task Modal -->
+    <div id="addTaskModal" class="modal">
+        <div class="modal-content">
+            <h3>Add New Task</h3>
+            <form id="addTaskForm">
+                <input type="hidden" id="taskQuadrant" name="quadrant" value="">
+                <div class="form-group">
+                    <label for="taskContent">Task Description:</label>
+                    <textarea id="taskContent" name="content" required></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="submit-btn">Add Task</button>
+                    <button type="button" class="cancel-btn" onclick="hideAddTaskForm()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{{end}}

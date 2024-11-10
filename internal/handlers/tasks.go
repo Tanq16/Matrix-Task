@@ -31,7 +31,6 @@ func NewTaskHandler(store storage.Storage, basePath string) (*TaskHandler, error
 	}, nil
 }
 
-// response is a generic response structure for JSON endpoints
 type response struct {
 	Success bool        `json:"success"`
 	Data    interface{} `json:"data,omitempty"`
@@ -44,14 +43,12 @@ func sendJSON(w http.ResponseWriter, status int, data interface{}) {
 	json.NewEncoder(w).Encode(data)
 }
 
-// RenderMatrix renders the main Eisenhower matrix view
 func (h *TaskHandler) RenderMatrix(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
 
-	// Get tasks for each quadrant
 	q1Tasks, _ := h.store.GetTasksByQuadrant(models.QuadrantUrgentImportant)
 	q2Tasks, _ := h.store.GetTasksByQuadrant(models.QuadrantNotUrgentImportant)
 	q3Tasks, _ := h.store.GetTasksByQuadrant(models.QuadrantUrgentNotImportant)
@@ -67,7 +64,6 @@ func (h *TaskHandler) RenderMatrix(w http.ResponseWriter, r *http.Request) {
 	h.tmpl.ExecuteTemplate(w, "index.html", data)
 }
 
-// RenderArchive renders the archived (completed) tasks view
 func (h *TaskHandler) RenderArchive(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
@@ -82,7 +78,6 @@ func (h *TaskHandler) RenderArchive(w http.ResponseWriter, r *http.Request) {
 	h.tmpl.ExecuteTemplate(w, "archive.html", data)
 }
 
-// AddTask handles the creation of new tasks
 func (h *TaskHandler) AddTask(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
@@ -103,7 +98,7 @@ func (h *TaskHandler) AddTask(w http.ResponseWriter, r *http.Request) {
 	}
 
 	task := models.NewTask(req.Content, req.Quadrant)
-	if err := h.store.AddTask(task); err != nil {
+	if err := h.store.AddTask(*task); err != nil {
 		sendJSON(w, http.StatusInternalServerError, response{
 			Success: false,
 			Error:   "Failed to create task",
@@ -117,7 +112,6 @@ func (h *TaskHandler) AddTask(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-// UpdateTask handles updating existing tasks
 func (h *TaskHandler) UpdateTask(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPut {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
@@ -133,7 +127,7 @@ func (h *TaskHandler) UpdateTask(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := h.store.UpdateTask(&task); err != nil {
+	if err := h.store.UpdateTask(task); err != nil {
 		status := http.StatusInternalServerError
 		if _, ok := err.(storage.ErrTaskNotFound); ok {
 			status = http.StatusNotFound
@@ -151,7 +145,6 @@ func (h *TaskHandler) UpdateTask(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-// CompleteTask marks a task as complete (moves it to archive)
 func (h *TaskHandler) CompleteTask(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
@@ -194,7 +187,6 @@ func (h *TaskHandler) CompleteTask(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-// DeleteTask removes a task from the system
 func (h *TaskHandler) DeleteTask(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodDelete {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
