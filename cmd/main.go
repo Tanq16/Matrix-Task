@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os"
-	"path/filepath"
 	"time"
 
 	"github.com/tanq16/matrix-task/internal/handlers"
@@ -18,27 +16,26 @@ func main() {
 	port := flag.Int("port", 8080, "Port to serve the application")
 	flag.Parse()
 
-	// Get the project root directory
-	rootDir, err := os.Getwd()
-	if err != nil {
-		log.Fatal("Failed to get working directory:", err)
-	}
-
 	// Initialize storage
 	store := storage.NewMemoryStorage()
 
-	// Initialize handlers
-	taskHandler, err := handlers.NewTaskHandler(store, rootDir)
+	// Initialize handlers with embedded templates
+	taskHandler, err := handlers.NewTaskHandler(store)
 	if err != nil {
 		log.Fatal("Failed to initialize task handler:", err)
 	}
 
-	// Create router (we'll use basic ServeMux since we don't need anything fancy)
+	// Get the embedded static file system
+	staticFS, err := handlers.GetStaticFileSystem()
+	if err != nil {
+		log.Fatal("Failed to get static file system:", err)
+	}
+
+	// Create router
 	mux := http.NewServeMux()
 
-	// Static file server
-	fileServer := http.FileServer(http.Dir(filepath.Join(rootDir, "static")))
-	mux.Handle("/static/", http.StripPrefix("/static/", fileServer))
+	// Static file server using embedded files
+	mux.Handle("/static/", http.StripPrefix("/static/", http.FileServer(staticFS)))
 
 	// Register routes
 	// Page routes

@@ -5,7 +5,6 @@ import (
 	"html/template"
 	"log"
 	"net/http"
-	"path/filepath"
 
 	"github.com/tanq16/matrix-task/internal/models"
 	"github.com/tanq16/matrix-task/internal/storage"
@@ -13,9 +12,8 @@ import (
 
 // TaskHandler handles all task-related HTTP requests
 type TaskHandler struct {
-	store    storage.Storage
-	tmpl     *template.Template
-	basePath string
+	store storage.Storage
+	tmpl  *template.Template
 }
 
 // templateData holds common data for all templates
@@ -26,17 +24,16 @@ type templateData struct {
 }
 
 // NewTaskHandler creates a new TaskHandler instance
-func NewTaskHandler(store storage.Storage, basePath string) (*TaskHandler, error) {
-	// Parse all templates, including the layout
-	tmpl, err := template.ParseGlob(filepath.Join(basePath, "internal/templates/*.html"))
+func NewTaskHandler(store storage.Storage) (*TaskHandler, error) {
+	// Parse all templates, including the layout, from embedded files
+	tmpl, err := template.ParseFS(templateFS, "templates/*.html")
 	if err != nil {
 		return nil, err
 	}
 
 	return &TaskHandler{
-		store:    store,
-		tmpl:     tmpl,
-		basePath: basePath,
+		store: store,
+		tmpl:  tmpl,
 	}, nil
 }
 

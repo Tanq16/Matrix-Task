@@ -18,10 +18,8 @@ FROM alpine:latest
 
 WORKDIR /app
 
-# Copy binary and assets from builder
+# Copy only the binary
 COPY --from=builder /app/build/matrix .
-COPY --from=builder /app/static ./static
-COPY --from=builder /app/internal/templates ./internal/templates
 
 EXPOSE 8080
 
