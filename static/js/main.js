@@ -22,7 +22,7 @@ const createTaskElement = (task) => {
     const taskElement = document.createElement('div');
     taskElement.className = 'task-card';
     taskElement.dataset.taskId = task.id;
-    
+
     taskElement.innerHTML = `
         <p class="task-content">${escapeHtml(task.content)}</p>
         <div class="task-actions">
@@ -30,7 +30,7 @@ const createTaskElement = (task) => {
             <button class="delete-btn" onclick="deleteTask('${task.id}')">×</button>
         </div>
     `;
-    
+
     return taskElement;
 };
 
@@ -54,7 +54,7 @@ const api = {
                 },
                 body: JSON.stringify({ content, quadrant }),
             });
-            
+
             if (!response.ok) throw new Error('Failed to add task');
             const result = await response.json();
             console.log('Add task response:', result);
