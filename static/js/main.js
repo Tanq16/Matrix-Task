@@ -56,7 +56,9 @@ const api = {
             });
             
             if (!response.ok) throw new Error('Failed to add task');
-            return await response.json();
+            const result = await response.json();
+            console.log('Add task response:', result);
+            return result;
         } catch (error) {
             console.error('Error adding task:', error);
             throw error;
@@ -74,7 +76,9 @@ const api = {
             });
             
             if (!response.ok) throw new Error('Failed to complete task');
-            return await response.json();
+            const result = await response.json();
+            console.log('Complete task response:', result);
+            return result;
         } catch (error) {
             console.error('Error completing task:', error);
             throw error;
@@ -116,17 +120,36 @@ window.hideAddTaskForm = () => {
 // Task Operations
 window.completeTask = async (taskId) => {
     try {
-        await api.completeTask(taskId);
+        const result = await api.completeTask(taskId);
+        console.log('Task completed:', result);
         
         // Find and remove the task element with animation
         const taskElement = document.querySelector(`[data-task-id="${taskId}"]`);
         if (taskElement) {
+            const quadrant = taskElement.closest('.matrix-quadrant');
+            const taskList = quadrant.querySelector('.task-list');
+            
             taskElement.classList.add('fade-out');
-            setTimeout(() => taskElement.remove(), 300);
+            
+            setTimeout(() => {
+                // Remove the task element
+                taskElement.remove();
+                
+                // Check if there are any remaining tasks in this quadrant
+                const remainingTasks = taskList.querySelectorAll('.task-card');
+                if (remainingTasks.length === 0) {
+                    // If no tasks remain, add the empty state
+                    const emptyState = document.createElement('div');
+                    emptyState.className = 'empty-state';
+                    emptyState.innerHTML = '<p>No tasks in this quadrant</p>';
+                    taskList.appendChild(emptyState);
+                }
+                
+                showNotification('Task completed successfully');
+            }, 300);
         }
-        
-        showNotification('Task completed successfully');
     } catch (error) {
+        console.error('Failed to complete task:', error);
         showNotification('Failed to complete task', true);
     }
 };
@@ -168,6 +191,12 @@ addTaskForm.addEventListener('submit', async (e) => {
         // Add new task to the appropriate quadrant
         const quadrantElement = document.querySelector(`[data-quadrant="${quadrant}"] .task-list`);
         if (quadrantElement && response.data) {
+            // Remove empty state if it exists
+            const emptyState = quadrantElement.querySelector('.empty-state');
+            if (emptyState) {
+                emptyState.remove();
+            }
+
             const taskElement = createTaskElement(response.data);
             quadrantElement.appendChild(taskElement);
         }
@@ -287,3 +316,31 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
+
+// Add empty state styling
+const additionalStyles = `
+    .empty-state {
+        text-align: center;
+        padding: var(--spacing-xl);
+        color: var(--color-text-light);
+        font-style: italic;
+    }
+
+    .task-list:empty {
+        min-height: 100px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: rgba(255, 255, 255, 0.5);
+        border-radius: var(--radius-md);
+    }
+
+    .task-list:empty::after {
+        content: 'No tasks in this quadrant';
+        color: var(--color-text-light);
+        font-style: italic;
+    }
+`;
+
+// Add the new styles to the existing style element
+document.querySelector('style').textContent += additionalStyles;

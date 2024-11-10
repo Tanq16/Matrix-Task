@@ -8,14 +8,20 @@
                 <button class="add-task-btn" onclick="showAddTaskForm(1)">+</button>
             </div>
             <div class="task-list">
-                {{range .Q1Tasks}}
-                <div class="task-card" data-task-id="{{.ID}}">
-                    <p class="task-content">{{.Content}}</p>
-                    <div class="task-actions">
-                        <button class="complete-btn" onclick="completeTask('{{.ID}}')">✓</button>
-                        <button class="delete-btn" onclick="deleteTask('{{.ID}}')">×</button>
+                {{if .Q1Tasks}}
+                    {{range .Q1Tasks}}
+                    <div class="task-card" data-task-id="{{.ID}}">
+                        <p class="task-content">{{.Content}}</p>
+                        <div class="task-actions">
+                            <button class="complete-btn" onclick="completeTask('{{.ID}}')">✓</button>
+                            <button class="delete-btn" onclick="deleteTask('{{.ID}}')">×</button>
+                        </div>
                     </div>
-                </div>
+                    {{end}}
+                {{else}}
+                    <div class="empty-state">
+                        <p>No tasks in this quadrant</p>
+                    </div>
                 {{end}}
             </div>
         </div>
@@ -27,14 +33,20 @@
                 <button class="add-task-btn" onclick="showAddTaskForm(2)">+</button>
             </div>
             <div class="task-list">
-                {{range .Q2Tasks}}
-                <div class="task-card" data-task-id="{{.ID}}">
-                    <p class="task-content">{{.Content}}</p>
-                    <div class="task-actions">
-                        <button class="complete-btn" onclick="completeTask('{{.ID}}')">✓</button>
-                        <button class="delete-btn" onclick="deleteTask('{{.ID}}')">×</button>
+                {{if .Q2Tasks}}
+                    {{range .Q2Tasks}}
+                    <div class="task-card" data-task-id="{{.ID}}">
+                        <p class="task-content">{{.Content}}</p>
+                        <div class="task-actions">
+                            <button class="complete-btn" onclick="completeTask('{{.ID}}')">✓</button>
+                            <button class="delete-btn" onclick="deleteTask('{{.ID}}')">×</button>
+                        </div>
                     </div>
-                </div>
+                    {{end}}
+                {{else}}
+                    <div class="empty-state">
+                        <p>No tasks in this quadrant</p>
+                    </div>
                 {{end}}
             </div>
         </div>
@@ -46,14 +58,20 @@
                 <button class="add-task-btn" onclick="showAddTaskForm(3)">+</button>
             </div>
             <div class="task-list">
-                {{range .Q3Tasks}}
-                <div class="task-card" data-task-id="{{.ID}}">
-                    <p class="task-content">{{.Content}}</p>
-                    <div class="task-actions">
-                        <button class="complete-btn" onclick="completeTask('{{.ID}}')">✓</button>
-                        <button class="delete-btn" onclick="deleteTask('{{.ID}}')">×</button>
+                {{if .Q3Tasks}}
+                    {{range .Q3Tasks}}
+                    <div class="task-card" data-task-id="{{.ID}}">
+                        <p class="task-content">{{.Content}}</p>
+                        <div class="task-actions">
+                            <button class="complete-btn" onclick="completeTask('{{.ID}}')">✓</button>
+                            <button class="delete-btn" onclick="deleteTask('{{.ID}}')">×</button>
+                        </div>
                     </div>
-                </div>
+                    {{end}}
+                {{else}}
+                    <div class="empty-state">
+                        <p>No tasks in this quadrant</p>
+                    </div>
                 {{end}}
             </div>
         </div>
@@ -65,14 +83,20 @@
                 <button class="add-task-btn" onclick="showAddTaskForm(4)">+</button>
             </div>
             <div class="task-list">
-                {{range .Q4Tasks}}
-                <div class="task-card" data-task-id="{{.ID}}">
-                    <p class="task-content">{{.Content}}</p>
-                    <div class="task-actions">
-                        <button class="complete-btn" onclick="completeTask('{{.ID}}')">✓</button>
-                        <button class="delete-btn" onclick="deleteTask('{{.ID}}')">×</button>
+                {{if .Q4Tasks}}
+                    {{range .Q4Tasks}}
+                    <div class="task-card" data-task-id="{{.ID}}">
+                        <p class="task-content">{{.Content}}</p>
+                        <div class="task-actions">
+                            <button class="complete-btn" onclick="completeTask('{{.ID}}')">✓</button>
+                            <button class="delete-btn" onclick="deleteTask('{{.ID}}')">×</button>
+                        </div>
                     </div>
-                </div>
+                    {{end}}
+                {{else}}
+                    <div class="empty-state">
+                        <p>No tasks in this quadrant</p>
+                    </div>
                 {{end}}
             </div>
         </div>

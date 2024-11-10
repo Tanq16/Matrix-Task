@@ -1,6 +1,7 @@
 package storage
 
 import (
+	"log"
 	"sync"
 
 	"github.com/tanq16/matrix-task/internal/models"
@@ -12,7 +13,6 @@ type MemoryStorage struct {
 	mu    sync.RWMutex
 }
 
-// NewMemoryStorage creates a new instance of MemoryStorage
 func NewMemoryStorage() *MemoryStorage {
 	return &MemoryStorage{
 		tasks: make(map[string]models.Task),
@@ -24,6 +24,7 @@ func (m *MemoryStorage) AddTask(task models.Task) error {
 	defer m.mu.Unlock()
 
 	m.tasks[task.ID] = task
+	log.Printf("Added task: %+v", task)
 	return nil
 }
 
@@ -47,6 +48,7 @@ func (m *MemoryStorage) UpdateTask(task models.Task) error {
 	}
 
 	m.tasks[task.ID] = task
+	log.Printf("Updated task: %+v", task)
 	return nil
 }
 
@@ -62,19 +64,6 @@ func (m *MemoryStorage) DeleteTask(id string) error {
 	return nil
 }
 
-func (m *MemoryStorage) GetTasksByQuadrant(quadrant models.Quadrant) ([]models.Task, error) {
-	m.mu.RLock()
-	defer m.mu.RUnlock()
-
-	var tasks []models.Task
-	for _, task := range m.tasks {
-		if task.Quadrant == quadrant && !task.Completed {
-			tasks = append(tasks, task)
-		}
-	}
-	return tasks, nil
-}
-
 func (m *MemoryStorage) GetArchivedTasks() ([]models.Task, error) {
 	m.mu.RLock()
 	defer m.mu.RUnlock()
@@ -85,5 +74,20 @@ func (m *MemoryStorage) GetArchivedTasks() ([]models.Task, error) {
 			tasks = append(tasks, task)
 		}
 	}
+	log.Printf("Retrieved archived tasks: %d tasks found", len(tasks))
+	return tasks, nil
+}
+
+func (m *MemoryStorage) GetTasksByQuadrant(quadrant models.Quadrant) ([]models.Task, error) {
+	m.mu.RLock()
+	defer m.mu.RUnlock()
+
+	var tasks []models.Task
+	for _, task := range m.tasks {
+		if task.Quadrant == quadrant && !task.Completed {
+			tasks = append(tasks, task)
+		}
+	}
+	log.Printf("Retrieved tasks for quadrant %d: %d tasks found", quadrant, len(tasks))
 	return tasks, nil
 }
